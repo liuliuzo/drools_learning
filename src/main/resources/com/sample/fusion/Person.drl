@@ -1,0 +1,31 @@
+package com.sample.fusion
+
+import com.liuliu.learning.drools.fusion.model.Person;
+
+declare Person
+  @role(event)
+  @timestamp( createTime )
+  @expires(20s)
+end
+
+rule "boy"
+   when
+      $p : Person(age > 0) over window:time(3s)
+   then
+      $p.setDesc("少年");
+      retract($p);
+      printName("boy",$p.getName(),$p.getAge(),$p.getDesc());
+end
+
+rule "old"
+   when
+      $p : Person(age > 49) over window:length(2)
+   then
+      $p.setDesc("老年");
+      retract($p);
+      printName("boy",$p.getName(),$p.getAge(),$p.getDesc());
+end
+
+function void printName(String streamName,String name,int age,String desc) {
+      System.out.println("streamName:"+streamName+" name:"+name+" age:"+age+" desc:"+ desc);
+}
